@@ -1,0 +1,22 @@
+name: Verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Verify
+    uses: apache/maven-gh-actions-shared/.github/workflows/maven-verify.yml@v4
+    with:
+      jdk-matrix: '[ "8", "11", "17", "21" ]'
+      ff-jdk: '21'
+      ff-goal: 'clean install site site:stage -P reporting -nsu'
+      ff-site-goal: '-v'
+      verify-goal: 'clean install -nsu -P run-its'
+      verify-fail-fast: false
+      failure-upload-path: |
+        surefire-its/target/*/log.txt
+        surefire-its/target/**/surefire-reports/*
+        surefire-its/target/**/failsafe-reports/*
+      timeout-minutes: 600
